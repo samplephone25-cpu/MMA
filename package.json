@@ -1,0 +1,16 @@
+{
+  "name": "makemyalgo",
+  "version": "1.0.0",
+  "description": "MakeMyAlgo.in - No-code algo trading platform for Indian markets",
+  "scripts": {
+    "server": "node server/index.js",
+    "dev": "node server/index.js",
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "yahoo-finance2": "^2.11.0",
+    "technicalindicators": "^3.1.0"
+  }
+}
