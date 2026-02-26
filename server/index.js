@@ -1,1 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MakeMyAlgo.in — No-Code Algo Trading Platform for Indian Markets</title>
+  <meta name="description" content="Build powerful trading algorithms for NSE & BSE without coding. Backtest on real data & get live signals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060a10;
+      --bg2: #0c1119;
+      --bg3: #111825;
+      --bg4: #0d1520;
+      --border: #1a2a3a;
+      --green: #00ff88;
+      --green2: #00cc6a;
+      --red: #ff4466;
+      --blue: #00ccff;
+      --yellow: #ffaa00;
+      --text: #e0e8f0;
+      --muted: #6b8f9e;
+      --dim: #4a5568;
+      --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    ::selection { background: #00ff8844; color: #fff; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(0,255,136,0.2); } 50% { box-shadow: 0 0 40px rgba(0,255,136,0.4); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    .fade-up { animation: fadeUp 0.8s ease forwards; opacity: 0; }
+    .fade-up-d1 { animation-delay: 0.1s; }
+    .fade-up-d2 { animation-delay: 0.2s; }
+    .fade-up-d3 { animation-delay: 0.3s; }
+    .fade-up-d4 { animation-delay: 0.4s; }
+    .fade-up-d5 { animation-delay: 0.5s; }
+
+    /* ─── LANDING PAGE ───────────────────── */
+    .landing-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 32px; position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(6,10,16,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #1a2a3a22;
+    }
+    .logo { font-size: 13px; font-weight: 700; color: var(--green); letter-spacing: 3px; text-transform: uppercase; cursor: pointer; }
+    .logo-icon { display: inline-block; margin-right: 6px; }
+
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; position: relative; padding: 100px 20px 60px;
+      background: radial-gradient(ellipse at 50% 0%, #0d281800 0%, var(--bg) 60%);
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(0,255,136,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+    .hero::after {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+      background: #00ff8810; border: 1px solid #00ff8822; border-radius: 20px;
+      font-size: 11px; color: var(--green); letter-spacing: 1px; margin-bottom: 28px;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 80px); font-weight: 800; line-height: 1.05;
+      font-family: var(--sans); margin-bottom: 24px; position: relative; z-index: 1;
+      background: linear-gradient(135deg, #ffffff 20%, var(--green) 60%, var(--green2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(14px, 2vw, 18px); color: var(--muted); max-width: 560px;
+      margin: 0 auto 40px; line-height: 1.7; font-family: var(--sans);
+    }
+
+    .cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green), var(--green2)); color: var(--bg);
+      border: none; padding: 16px 48px; font-size: 14px; font-weight: 700; border-radius: 8px;
+      cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-family: var(--mono);
+      transition: all 0.3s; animation: glow 3s infinite;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(0,255,136,0.5); }
+    .btn-outline {
+      background: transparent; color: var(--green); border: 1px solid #00ff8844;
+      padding: 16px 48px; font-size: 14px; font-weight: 700; border-radius: 8px;
+      cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-family: var(--mono); transition: all 0.3s;
+    }
+    .btn-outline:hover { background: #00ff8810; border-color: var(--green); }
+    .btn-sm { padding: 8px 20px; font-size: 11px; }
+    .btn-xs { padding: 6px 14px; font-size: 10px; }
+
+    .hero-stats {
+      display: flex; gap: 48px; margin-top: 72px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1;
+    }
+    .hero-stat-val { font-size: 32px; font-weight: 800; color: var(--green); font-family: var(--sans); }
+    .hero-stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-top: 4px; }
+
+    /* Ticker */
+    .ticker-wrap {
+      overflow: hidden; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .ticker {
+      display: flex; gap: 40px; animation: ticker 30s linear infinite; white-space: nowrap;
+    }
+    .ticker-item { display: flex; gap: 8px; align-items: center; font-size: 12px; }
+    .ticker-sym { font-weight: 700; color: var(--text); }
+    .ticker-price { color: var(--muted); }
+    .ticker-change { font-weight: 600; }
+    .ticker-up { color: var(--green); }
+    .ticker-down { color: var(--red); }
+
+    /* Features */
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; padding: 80px 32px; max-width: 1100px; margin: 0 auto;
+    }
+    .feature-card {
+      background: linear-gradient(135deg, var(--bg3), var(--bg4)); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px; transition: all 0.4s; cursor: default;
+    }
+    .feature-card:hover { border-color: #00ff8844; transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .feature-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+    .feature-title { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 10px; font-family: var(--sans); }
+    .feature-desc { font-size: 13px; color: var(--muted); line-height: 1.7; font-family: var(--sans); }
+
+    /* How it works */
+    .steps { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .step { flex: 1; min-width: 220px; text-align: center; }
+    .step-num { font-size: 56px; font-weight: 800; color: #00ff8820; font-family: var(--sans); line-height: 1; }
+    .step-title { font-size: 16px; font-weight: 700; color: var(--text); margin: 12px 0 8px; font-family: var(--sans); }
+    .step-desc { font-size: 13px; color: var(--muted); font-family: var(--sans); }
+
+    .section-title {
+      font-size: clamp(24px, 4vw, 36px); font-weight: 800; color: #fff;
+      text-align: center; margin-bottom: 48px; font-family: var(--sans);
+    }
+
+    /* Footer */
+    .footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; }
+
+    /* ─── DASHBOARD ──────────────────────── */
+    .dash-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 24px; border-bottom: 1px solid var(--border); background: var(--bg2);
+      position: sticky; top: 0; z-index: 100; gap: 12px; flex-wrap: wrap;
+    }
+    .nav-tabs { display: flex; gap: 4px; }
+    .nav-tab {
+      padding: 8px 20px; font-size: 11px; font-weight: 600; background: transparent;
+      color: var(--muted); border: 1px solid transparent; border-radius: 6px;
+      cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-family: var(--mono); transition: all 0.2s;
+    }
+    .nav-tab.active { background: #00ff8812; color: var(--green); border-color: #00ff8833; }
+    .nav-tab:hover:not(.active) { color: var(--text); background: #ffffff08; }
+
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    .card {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; animation: fadeIn 0.4s ease;
+    }
+    .card-title {
+      font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 16px;
+    }
+
+    /* Form elements */
+    .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    select, .input {
+      background: var(--bg); color: var(--text); border: 1px solid var(--border);
+      padding: 10px 14px; border-radius: 6px; font-size: 12px; font-family: var(--mono);
+      outline: none; transition: border-color 0.2s;
+    }
+    select:focus, .input:focus { border-color: var(--green); }
+    select { cursor: pointer; min-width: 130px; }
+    .input-sm { width: 90px; }
+
+    /* Rules */
+    .rule-row {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 14px 16px; background: var(--bg4); border-radius: 8px;
+      margin-bottom: 8px; border: 1px solid var(--border); animation: slideIn 0.3s ease;
+    }
+    .rule-label { color: var(--green); font-size: 11px; font-weight: 700; min-width: 50px; }
+    .btn-remove {
+      background: #ff446618; color: var(--red); border: 1px solid #ff446633;
+      padding: 6px 12px; font-size: 11px; border-radius: 4px; cursor: pointer;
+      font-family: var(--mono); font-weight: 600; transition: all 0.2s;
+    }
+    .btn-remove:hover { background: #ff446633; }
+
+    .actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+
+    /* Stats grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-box {
+      background: var(--bg4); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px; text-align: center;
+    }
+    .stat-val { font-size: 22px; font-weight: 800; margin-bottom: 4px; font-family: var(--sans); }
+    .stat-lbl { font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* Chart container */
+    .chart-container { width: 100%; overflow-x: auto; }
+    .chart-container svg { display: block; width: 100%; max-width: 100%; height: auto; }
+
+    /* Trade table */
+    .trade-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .trade-table th {
+      padding: 10px 12px; text-align: left; color: var(--muted); font-size: 10px;
+      letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+    .trade-table td { padding: 10px 12px; border-bottom: 1px solid #0d1520; }
+    .trade-table tr:hover td { background: #ffffff04; }
+
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    }
+    .badge-buy { background: #00ff8818; color: var(--green); }
+    .badge-sell { background: #ff446618; color: var(--red); }
+
+    /* Signals */
+    .signal-card {
+      background: var(--bg4); border-radius: 10px; padding: 16px; margin-bottom: 8px;
+      border: 1px solid var(--border); transition: all 0.2s; animation: slideIn 0.3s ease;
+    }
+    .signal-card:hover { border-color: #00ff8833; }
+    .signal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .signal-sym { font-weight: 700; font-size: 15px; }
+    .signal-details { display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px; }
+    .signal-details span { color: var(--muted); }
+    .signal-details strong { color: var(--text); font-weight: 600; }
+
+    /* Loading */
+    .loader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; gap: 16px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top: 3px solid var(--green); border-radius: 50%; animation: spin 1s linear infinite; }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 60px 20px; color: var(--dim); }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-text { font-size: 14px; font-family: var(--sans); margin-bottom: 20px; }
+
+    /* Login modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex;
+      align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    .modal {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 16px;
+      padding: 40px; width: 100%; max-width: 400px;
+    }
+    .modal-title { font-size: 11px; color: var(--green); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; font-weight: 700; }
+    .modal-input {
+      width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border);
+      padding: 14px 16px; border-radius: 8px; font-size: 13px; font-family: var(--mono);
+      outline: none; margin-bottom: 12px;
+    }
+    .modal-input:focus { border-color: var(--green); }
+    .modal-link { color: var(--green); cursor: pointer; text-decoration: none; }
+    .modal-link:hover { text-decoration: underline; }
+
+    /* Lang toggle */
+    .lang-btn {
+      padding: 6px 12px; font-size: 11px; background: var(--bg4); color: var(--muted);
+      border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+      font-family: var(--mono); font-weight: 600; transition: all 0.2s;
+    }
+    .lang-btn:hover { color: var(--text); border-color: var(--muted); }
+
+    /* Live dot */
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+      background: var(--bg4); border-radius: 6px; font-size: 11px; color: var(--muted);
+    }
+    .status-bar.ok { border-left: 3px solid var(--green); }
+    .status-bar.error { border-left: 3px solid var(--red); }
+    .status-bar.loading { border-left: 3px solid var(--yellow); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .landing-nav { padding: 12px 16px; }
+      .hero { padding: 80px 16px 40px; }
+      .hero-stats { gap: 24px; }
+      .features { padding: 40px 16px; gap: 16px; }
+      .dashboard { padding: 16px; }
+      .card { padding: 16px; }
+      .dash-nav { padding: 8px 12px; }
+      .nav-tabs { overflow-x: auto; }
+      .form-row { gap: 8px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; padding: 14px 24px;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+      font-size: 12px; z-index: 1000; animation: slideIn 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .toast.success { border-left: 3px solid var(--green); color: var(--green); }
+    .toast.error { border-left: 3px solid var(--red); color: var(--red); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ─── LANDING PAGE ──────────────────────────────────────────────── -->
+<div id="landing-page">
+  <nav class="landing-nav">
+    <span class="logo" onclick="goTo('landing')"><span class="logo-icon">⚡</span>MAKEMYALGO</span>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <button class="lang-btn" onclick="toggleLang()" id="lang-btn">हिंदी</button>
+      <button class="btn-outline btn-sm" onclick="showModal()">Login</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge fade-up">
+      <span class="dot"></span>
+      <span data-en="Live for Indian Markets" data-hi="Indian Markets के लिए Live">Live for Indian Markets</span>
+    </div>
+    <h1 class="fade-up fade-up-d1">
+      <span data-en="Build Your Algo." data-hi="अपना Algo बनाओ।">Build Your Algo.</span><br>
+      <span data-en="No Code Needed." data-hi="बिना Coding के।">No Code Needed.</span>
+    </h1>
+    <p class="fade-up fade-up-d2" data-en="Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Yahoo Finance data." data-hi="NSE और BSE के लिए powerful trading algorithms बनाओ बिना एक भी line code लिखे। Real historical data पर backtest करो और live signals पाओ — सब Yahoo Finance के 15-minute delayed data के साथ।">
+      Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Yahoo Finance data.
+    </p>
+    <div class="cta-group fade-up fade-up-d3">
+      <button class="btn-primary" onclick="goTo('dashboard')">
+        <span data-en="Start Building →" data-hi="शुरू करें →">Start Building →</span>
+      </button>
+      <button class="btn-outline" onclick="showModal()">
+        <span data-en="Login" data-hi="लॉगिन करें">Login</span>
+      </button>
+    </div>
+    <div class="hero-stats fade-up fade-up-d4">
+      <div><div class="hero-stat-val" id="stat-stocks">50+</div><div class="hero-stat-lbl" data-en="NSE Stocks" data-hi="NSE Stocks">NSE Stocks</div></div>
+      <div><div class="hero-stat-val">8+</div><div class="hero-stat-lbl" data-en="Indicators" data-hi="Indicators">Indicators</div></div>
+      <div><div class="hero-stat-val" data-en="Free" data-hi="Free">Free</div><div class="hero-stat-lbl" data-en="Real Market Data" data-hi="Real Market Data">Real Market Data</div></div>
+    </div>
+  </section>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap" id="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div style="color:var(--dim);padding:0 20px;">Loading market data...</div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card fade-up">
+      <span class="feature-icon">🧩</span>
+      <div class="feature-title" data-en="No-Code Algo Builder" data-hi="No-Code Algo Builder">No-Code Algo Builder</div>
+      <div class="feature-desc" data-en="Pick from 8+ indicators — RSI, MACD, EMA, SuperTrend, Bollinger Bands. Set conditions visually, no programming needed." data-hi="8+ indicators में से चुनें — RSI, MACD, EMA, SuperTrend, Bollinger Bands। Conditions visually set करें, कोई programming नहीं चाहिए।">Pick from 8+ indicators — RSI, MACD, EMA, SuperTrend, Bollinger Bands. Set conditions visually, no programming needed.</div>
+    </div>
+    <div class="feature-card fade-up fade-up-d1">
+      <span class="feature-icon">📊</span>
+      <div class="feature-title" data-en="Backtest on Real Data" data-hi="Real Data पर Backtest">Backtest on Real Data</div>
+      <div class="feature-desc" data-en="Test strategies on real NSE/BSE historical data from Yahoo Finance. See equity curves, Sharpe ratio, drawdowns, and full trade logs." data-hi="Yahoo Finance से real NSE/BSE historical data पर strategies test करें। Equity curves, Sharpe ratio, drawdowns, और full trade logs देखें।">Test strategies on real NSE/BSE historical data from Yahoo Finance. See equity curves, Sharpe ratio, drawdowns, and full trade logs.</div>
+    </div>
+    <div class="feature-card fade-up fade-up-d2">
+      <span class="feature-icon">🔔</span>
+      <div class="feature-title" data-en="Live Signal Scanner" data-hi="Live Signal Scanner">Live Signal Scanner</div>
+      <div class="feature-desc" data-en="Scan NIFTY 50 stocks in real-time with your algo rules. Get BUY/SELL signals with entry price, target, and stop-loss." data-hi="अपने algo rules के साथ NIFTY 50 stocks को real-time में scan करें। Entry price, target, और stop-loss के साथ BUY/SELL signals पाएं।">Scan NIFTY 50 stocks in real-time with your algo rules. Get BUY/SELL signals with entry price, target, and stop-loss.</div>
+    </div>
+    <div class="feature-card fade-up fade-up-d3">
+      <span class="feature-icon">🇮🇳</span>
+      <div class="feature-title" data-en="Made for India" data-hi="India के लिए बना">Made for India</div>
+      <div class="feature-desc" data-en="Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Yahoo Finance." data-hi="NSE और BSE के लिए बनाया गया। सभी NIFTY 50 stocks support, Hindi + English interface। Yahoo Finance से 15-min delayed data।">Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Yahoo Finance.</div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section style="padding:60px 24px 80px;">
+    <h2 class="section-title" data-en="How It Works" data-hi="कैसे काम करता है">How It Works</h2>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><div class="step-title" data-en="Pick Indicators" data-hi="Indicators चुनें">Pick Indicators</div><div class="step-desc" data-en="Choose RSI, MACD, EMA, SuperTrend or any of 8+ indicators" data-hi="RSI, MACD, EMA, SuperTrend या 8+ indicators में से चुनें">Choose RSI, MACD, EMA, SuperTrend or any of 8+ indicators</div></div>
+      <div class="step"><div class="step-num">02</div><div class="step-title" data-en="Set Conditions" data-hi="Conditions सेट करें">Set Conditions</div><div class="step-desc" data-en="Define buy/sell rules: crosses above, below, or equals a value" data-hi="Buy/sell rules define करें: crosses above, below, या equals">Define buy/sell rules: crosses above, below, or equals a value</div></div>
+      <div class="step"><div class="step-num">03</div><div class="step-title" data-en="Backtest & Scan" data-hi="Backtest और Scan करें">Backtest & Scan</div><div class="step-desc" data-en="Test on real data, then scan live market for matching signals" data-hi="Real data पर test करें, फिर matching signals के लिए live market scan करें">Test on real data, then scan live market for matching signals</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="text-align:center;padding:60px 24px 80px;background:radial-gradient(ellipse at 50% 100%, #0d281800 0%, var(--bg) 60%);">
+    <h2 class="section-title" data-en="Start Building Your Algo Today" data-hi="आज ही अपना Algo बनाना शुरू करें">Start Building Your Algo Today</h2>
+    <button class="btn-primary" onclick="goTo('dashboard')">
+      <span data-en="Open Dashboard →" data-hi="Dashboard खोलें →">Open Dashboard →</span>
+    </button>
+  </section>
+
+  <div class="footer">© 2026 MakeMyAlgo.in — <span data-en="Built for Indian Traders" data-hi="Indian Traders के लिए बनाया गया">Built for Indian Traders</span> 🇮🇳</div>
+</div>
+
+<!-- ─── DASHBOARD ─────────────────────────────────────────────────── -->
+<div id="dashboard-page" class="hidden">
+  <nav class="dash-nav">
+    <span class="logo" onclick="goTo('landing')"><span class="logo-icon">⚡</span>MAKEMYALGO</span>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="builder" onclick="switchTab('builder')">🧩 Builder</button>
+      <button class="nav-tab" data-tab="backtest" onclick="switchTab('backtest')">📊 Backtest</button>
+      <button class="nav-tab" data-tab="signals" onclick="switchTab('signals')">🔔 Signals</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="lang-btn" onclick="toggleLang()" id="lang-btn-2">हिंदी</button>
+      <button class="btn-outline btn-xs" onclick="goTo('landing')">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <!-- Status -->
+    <div class="status-bar loading" id="api-status">
+      ⏳ <span data-en="Connecting to Yahoo Finance..." data-hi="Yahoo Finance से connect हो रहा है...">Connecting to Yahoo Finance...</span>
+    </div>
+
+    <!-- ─── BUILDER TAB ──── -->
+    <div id="tab-builder">
+      <div class="card">
+        <div class="card-title">⚡ <span data-en="Algo Configuration" data-hi="Algo Configuration">Algo Configuration</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-en="Algo Name" data-hi="Algo का नाम">Algo Name</label>
+            <input class="input" id="algo-name" value="My RSI Strategy" style="width:200px;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stock</label>
+            <select id="algo-stock"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Timeframe</label>
+            <select id="algo-timeframe">
+              <option value="1d">1 Day</option>
+              <option value="1h">1 Hour</option>
+              <option value="15m" disabled>15 Min (intraday only)</option>
+              <option value="5m" disabled>5 Min (intraday only)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-en="Data Range" data-hi="Data Range">Data Range</label>
+            <select id="algo-range">
+              <option value="6mo">6 Months</option>
+              <option value="1y" selected>1 Year</option>
+              <option value="2y">2 Years</option>
+              <option value="5y">5 Years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buy Rules -->
+      <div class="card">
+        <div class="card-title">📈 <span data-en="Buy Rules (Entry)" data-hi="Buy Rules (Entry)">Buy Rules (Entry)</span></div>
+        <div id="buy-rules"></div>
+        <div class="actions">
+          <button class="btn-outline btn-sm" onclick="addRule('buy')">+ <span data-en="Add Buy Rule" data-hi="Buy Rule जोड़ें">Add Buy Rule</span></button>
+        </div>
+      </div>
+
+      <!-- Sell Rules -->
+      <div class="card">
+        <div class="card-title">📉 <span data-en="Sell Rules (Exit)" data-hi="Sell Rules (Exit)">Sell Rules (Exit)</span></div>
+        <div id="sell-rules"></div>
+        <div class="actions">
+          <button class="btn-outline btn-sm" onclick="addRule('sell')">+ <span data-en="Add Sell Rule" data-hi="Sell Rule जोड़ें">Add Sell Rule</span></button>
+        </div>
+      </div>
+
+      <!-- Backtest Config -->
+      <div class="card">
+        <div class="card-title">⚙️ <span data-en="Backtest Settings" data-hi="Backtest Settings">Backtest Settings</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" data-en="Initial Capital (₹)" data-hi="शुरुआती पूंजी (₹)">Initial Capital (₹)</label>
+            <input class="input" id="initial-capital" value="100000" type="number" style="width:140px;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-en="Position Size %" data-hi="Position Size %">Position Size %</label>
+            <input class="input input-sm" id="position-size" value="10" type="number">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-en="Stop Loss %" data-hi="Stop Loss %">Stop Loss %</label>
+            <input class="input input-sm" id="stop-loss" value="2" type="number">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-en="Target %" data-hi="Target %">Target %</label>
+            <input class="input input-sm" id="target-pct" value="4" type="number">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" onclick="runBacktest()" id="btn-backtest">
+          ▶ <span data-en="Run Backtest" data-hi="Backtest चलाएं">Run Backtest</span>
+        </button>
+        <button class="btn-outline" onclick="scanSignals()">
+          🔔 <span data-en="Scan Live Signals" data-hi="Live Signals Scan करें">Scan Live Signals</span>
+        </button>
+      </div>
+
+      <!-- Chart Preview -->
+      <div class="card" id="chart-preview-card">
+        <div class="card-title">📈 <span id="chart-stock-label">RELIANCE</span> — <span data-en="Live Chart" data-hi="Live Chart">Live Chart</span>
+          <span style="font-weight:400;color:var(--dim);"> (Yahoo Finance, 15-min delay)</span>
+        </div>
+        <div class="chart-container" id="chart-container">
+          <div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;" data-en="Loading chart..." data-hi="Chart load हो रहा है...">Loading chart...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── BACKTEST TAB ──── -->
+    <div id="tab-backtest" class="hidden">
+      <div class="card" id="backtest-results">
+        <div class="empty">
+          <div class="empty-icon">📊</div>
+          <div class="empty-text" data-en="Build an algo and run backtest to see results here." data-hi="Algo बनाओ और backtest चलाओ — results यहाँ दिखेंगे।">Build an algo and run backtest to see results here.</div>
+          <button class="btn-outline btn-sm" onclick="switchTab('builder')">
+            <span data-en="Go to Builder →" data-hi="Builder पर जाएं →">Go to Builder →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SIGNALS TAB ──── -->
+    <div id="tab-signals" class="hidden">
+      <div class="card" id="signals-results">
+        <div class="empty">
+          <div class="empty-icon">🔔</div>
+          <div class="empty-text" data-en="Add rules in Builder, then scan for live signals." data-hi="Builder में rules जोड़ें, फिर live signals scan करें।">Add rules in Builder, then scan for live signals.</div>
+          <button class="btn-outline btn-sm" onclick="switchTab('builder')">
+            <span data-en="Go to Builder →" data-hi="Builder पर जाएं →">Go to Builder →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── LOGIN MODAL ──── -->
+<div id="login-modal" class="modal-overlay hidden" onclick="hideModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">⚡ Login to MakeMyAlgo</div>
+    <input class="modal-input" placeholder="Email address" type="email">
+    <input class="modal-input" placeholder="Password" type="password">
+    <button class="btn-primary" style="width:100%;padding:14px;font-size:13px;" onclick="hideModal();goTo('dashboard');">Login →</button>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">
+      <span data-en="Don't have an account?" data-hi="Account नहीं है?">Don't have an account?</span>
+      <a class="modal-link" data-en=" Sign up free" data-hi=" Free sign up करें"> Sign up free</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────
+const API_BASE = window.location.origin + '/api';
+
+const INDICATORS = [
+  { id: 'sma', name: 'SMA (Simple Moving Average)', params: ['Period'], defaults: { Period: '20' } },
+  { id: 'ema', name: 'EMA (Exponential Moving Average)', params: ['Period'], defaults: { Period: '20' } },
+  { id: 'rsi', name: 'RSI (Relative Strength Index)', params: ['Period'], defaults: { Period: '14' } },
+  { id: 'macd', name: 'MACD', params: ['Fast', 'Slow', 'Signal'], defaults: { Fast: '12', Slow: '26', Signal: '9' } },
+  { id: 'bb', name: 'Bollinger Bands', params: ['Period', 'StdDev'], defaults: { Period: '20', StdDev: '2' } },
+  { id: 'supertrend', name: 'SuperTrend', params: ['Period', 'Multiplier'], defaults: { Period: '10', Multiplier: '3' } },
+  { id: 'vwap', name: 'VWAP', params: [] , defaults: {} },
+  { id: 'atr', name: 'ATR (Average True Range)', params: ['Period'], defaults: { Period: '14' } },
+];
+
+const CONDITIONS = ['Crosses Above', 'Crosses Below', 'Is Above', 'Is Below', 'Equals'];
+
+const NIFTY50 = [
+  'RELIANCE','TCS','HDFCBANK','INFY','ICICIBANK','HINDUNILVR','ITC','SBIN',
+  'BHARTIARTL','KOTAKBANK','LT','AXISBANK','ASIANPAINT','MARUTI','TITAN',
+  'SUNPHARMA','BAJFINANCE','WIPRO','ULTRACEMCO','NESTLEIND','TATAMOTORS',
+  'POWERGRID','NTPC','HCLTECH','TECHM','ONGC','TATASTEEL','JSWSTEEL',
+  'ADANIENT','BAJAJFINSV','DRREDDY','CIPLA','EICHERMOT','DIVISLAB',
+  'APOLLOHOSP','BRITANNIA','COALINDIA','GRASIM','HEROMOTOCO','HINDALCO',
+  'INDUSINDBK','M&M','SBILIFE','TATACONSUM','LTIM','BAJAJ-AUTO','BPCL','HDFCLIFE'
+];
+
+let lang = 'en';
+let buyRules = [];
+let sellRules = [];
+let ruleCounter = 0;
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────
+function goTo(page) {
+  document.getElementById('landing-page').classList.toggle('hidden', page !== 'landing');
+  document.getElementById('dashboard-page').classList.toggle('hidden', page !== 'dashboard');
+  if (page === 'dashboard') {
+    initDashboard();
+  }
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  ['builder', 'backtest', 'signals'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+  });
+}
+
+function showModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+function hideModal() { document.getElementById('login-modal').classList.add('hidden'); }
+
+// ─── LANGUAGE ────────────────────────────────────────────────────────
+function toggleLang() {
+  lang = lang === 'en' ? 'hi' : 'en';
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'हिंदी' : 'English';
+  document.getElementById('lang-btn-2').textContent = lang === 'en' ? 'हिंदी' : 'EN';
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const text = el.getAttribute(`data-${lang}`);
+    if (text) el.textContent = text;
+  });
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}`;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 4000);
+}
+
+// ─── INIT DASHBOARD ──────────────────────────────────────────────────
+let dashboardInitialized = false;
+
+function initDashboard() {
+  if (dashboardInitialized) return;
+  dashboardInitialized = true;
+
+  // Populate stock dropdown
+  const sel = document.getElementById('algo-stock');
+  NIFTY50.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+
+  // Check API health
+  checkApiHealth();
+
+  // Load initial chart
+  sel.addEventListener('change', () => loadChart());
+  loadChart();
+
+  // Load ticker
+  loadTicker();
+}
+
+async function checkApiHealth() {
+  const status = document.getElementById('api-status');
+  try {
+    const res = await fetch(`${API_BASE}/health`);
+    if (res.ok) {
+      status.className = 'status-bar ok';
+      status.innerHTML = `✅ <span>Connected to Yahoo Finance — Real NSE/BSE data (15-min delay)</span>`;
+    } else throw new Error();
+  } catch {
+    status.className = 'status-bar error';
+    status.innerHTML = `❌ <span data-en="API not connected. Start the server: npm start" data-hi="API connected नहीं है। Server start करें: npm start">API not connected. Start the server: <code>npm start</code></span>`;
+  }
+}
+
+// ─── TICKER ──────────────────────────────────────────────────────────
+async function loadTicker() {
+  const tickerEl = document.getElementById('ticker');
+  try {
+    const stocks = NIFTY50.slice(0, 15);
+    const items = [];
+    for (const sym of stocks) {
+      try {
+        const res = await fetch(`${API_BASE}/quote/${sym}`);
+        if (!res.ok) continue;
+        const data = await res.json();
+        const up = data.changePercent >= 0;
+        items.push(`
+          <div class="ticker-item">
+            <span class="ticker-sym">${sym}</span>
+            <span class="ticker-price">₹${data.price?.toFixed(2) || '—'}</span>
+            <span class="ticker-change ${up ? 'ticker-up' : 'ticker-down'}">${up ? '+' : ''}${data.changePercent?.toFixed(2) || 0}%</span>
+          </div>
+        `);
+      } catch { /* skip */ }
+    }
+    if (items.length > 0) {
+      const double = items.join('') + items.join(''); // duplicate for infinite scroll
+      tickerEl.innerHTML = double;
+    }
+  } catch {
+    tickerEl.innerHTML = '<div style="color:var(--dim);padding:0 20px;">Market data unavailable</div>';
+  }
+}
+
+// ─── CHART ───────────────────────────────────────────────────────────
+async function loadChart() {
+  const symbol = document.getElementById('algo-stock').value || 'RELIANCE';
+  const range = document.getElementById('algo-range').value || '1y';
+  const interval = document.getElementById('algo-timeframe').value || '1d';
+  document.getElementById('chart-stock-label').textContent = symbol;
+  const container = document.getElementById('chart-container');
+  container.innerHTML = '<div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;">Loading real data...</span></div>';
+
+  try {
+    const res = await fetch(`${API_BASE}/stock/${symbol}?interval=${interval}&range=${range}`);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    drawCandleChart(container, data.candles, data.meta);
+  } catch (err) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load chart. Make sure the server is running.<br><code style="color:var(--green);">npm start</code></div></div>`;
+  }
+}
+
+function drawCandleChart(container, candles, meta) {
+  if (!candles || candles.length < 5) {
+    container.innerHTML = '<div class="empty"><div class="empty-text">No data available</div></div>';
+    return;
+  }
+  const recent = candles.slice(-80);
+  const W = 800, H = 300, PAD = 50;
+  const highs = recent.map(c => c.high);
+  const lows = recent.map(c => c.low);
+  const min = Math.min(...lows) * 0.998;
+  const max = Math.max(...highs) * 1.002;
+  const range = max - min;
+  const barW = (W - PAD * 2) / recent.length;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Grid lines
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD + (i / 4) * (H - PAD * 2);
+    const price = max - (i / 4) * range;
+    svg += `<line x1="${PAD}" x2="${W - PAD}" y1="${y}" y2="${y}" stroke="#1a2332" stroke-width="0.5"/>`;
+    svg += `<text x="${PAD - 6}" y="${y + 4}" fill="#6b8f9e" font-size="9" text-anchor="end" font-family="JetBrains Mono">₹${price.toFixed(0)}</text>`;
+  }
+
+  // Price info
+  const lastC = recent[recent.length - 1];
+  const change = meta?.previousClose ? ((lastC.close - meta.previousClose) / meta.previousClose * 100).toFixed(2) : 0;
+  const up = change >= 0;
+  svg += `<text x="${PAD}" y="20" fill="${up ? '#00ff88' : '#ff4466'}" font-size="14" font-weight="700" font-family="Plus Jakarta Sans">₹${lastC.close.toFixed(2)}</text>`;
+  svg += `<text x="${PAD + 120}" y="20" fill="${up ? '#00ff88' : '#ff4466'}" font-size="11" font-family="JetBrains Mono">${up ? '+' : ''}${change}%</text>`;
+
+  // Candles
+  recent.forEach((c, i) => {
+    const x = PAD + i * barW;
+    const bullish = c.close >= c.open;
+    const color = bullish ? '#00ff88' : '#ff4466';
+    const bodyTop = PAD + (1 - (Math.max(c.open, c.close) - min) / range) * (H - PAD * 2);
+    const bodyBot = PAD + (1 - (Math.min(c.open, c.close) - min) / range) * (H - PAD * 2);
+    const wickTop = PAD + (1 - (c.high - min) / range) * (H - PAD * 2);
+    const wickBot = PAD + (1 - (c.low - min) / range) * (H - PAD * 2);
+    svg += `<line x1="${x + barW / 2}" x2="${x + barW / 2}" y1="${wickTop}" y2="${wickBot}" stroke="${color}" stroke-width="1"/>`;
+    svg += `<rect x="${x + 1}" y="${bodyTop}" width="${Math.max(barW - 2, 2)}" height="${Math.max(bodyBot - bodyTop, 1)}" fill="${color}" rx="0.5"/>`;
+  });
+
+  // Date labels
+  const step = Math.max(1, Math.floor(recent.length / 6));
+  for (let i = 0; i < recent.length; i += step) {
+    const x = PAD + i * barW;
+    const d = new Date(recent[i].date);
+    const label = d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+    svg += `<text x="${x}" y="${H - 8}" fill="#4a5568" font-size="8" font-family="JetBrains Mono">${label}</text>`;
+  }
+
+  svg += '</svg>';
+
+  // Meta info
+  let info = `<div style="display:flex;gap:20px;flex-wrap:wrap;padding:8px 0;font-size:11px;color:var(--muted);">`;
+  info += `<span>Open: ₹${lastC.open}</span><span>High: ₹${lastC.high}</span><span>Low: ₹${lastC.low}</span>`;
+  info += `<span>Vol: ${(lastC.volume / 100000).toFixed(1)}L</span>`;
+  if (meta?.name) info += `<span>${meta.name}</span>`;
+  info += '</div>';
+
+  container.innerHTML = svg + info;
+}
+
+// ─── RULES ───────────────────────────────────────────────────────────
+function addRule(type) {
+  ruleCounter++;
+  const id = ruleCounter;
+  const rule = { id, indicator: 'rsi', condition: 'Crosses Below', value: '30', params: { Period: '14' } };
+
+  if (type === 'buy') buyRules.push(rule);
+  else sellRules.push(rule);
+
+  renderRules();
+}
+
+function removeRule(type, id) {
+  if (type === 'buy') buyRules = buyRules.filter(r => r.id !== id);
+  else sellRules = sellRules.filter(r => r.id !== id);
+  renderRules();
+}
+
+function renderRules() {
+  renderRuleList('buy', buyRules, document.getElementById('buy-rules'));
+  renderRuleList('sell', sellRules, document.getElementById('sell-rules'));
+}
+
+function renderRuleList(type, rules, container) {
+  if (rules.length === 0) {
+    container.innerHTML = `<div style="color:var(--dim);font-size:12px;padding:16px;text-align:center;font-family:var(--sans);">No ${type} rules yet. Click "Add ${type === 'buy' ? 'Buy' : 'Sell'} Rule" to start.</div>`;
+    return;
+  }
+
+  container.innerHTML = rules.map((rule, idx) => {
+    const ind = INDICATORS.find(i => i.id === rule.indicator) || INDICATORS[0];
+    const indOptions = INDICATORS.map(i => `<option value="${i.id}" ${i.id === rule.indicator ? 'selected' : ''}>${i.name}</option>`).join('');
+    const condOptions = CONDITIONS.map(c => `<option value="${c}" ${c === rule.condition ? 'selected' : ''}>${c}</option>`).join('');
+    
+    const paramInputs = ind.params.map(p => 
+      `<input class="input input-sm" placeholder="${p}" value="${rule.params?.[p] || ind.defaults?.[p] || ''}" onchange="updateRuleParam('${type}', ${rule.id}, '${p}', this.value)">`
+    ).join('');
+
+    return `
+      <div class="rule-row">
+        <span class="rule-label">${idx === 0 ? (type === 'buy' ? 'BUY WHEN' : 'SELL WHEN') : 'AND'}</span>
+        <select onchange="updateRuleIndicator('${type}', ${rule.id}, this.value)">${indOptions}</select>
+        ${paramInputs}
+        <select onchange="updateRuleField('${type}', ${rule.id}, 'condition', this.value)">${condOptions}</select>
+        <input class="input input-sm" placeholder="Value" value="${rule.value}" onchange="updateRuleField('${type}', ${rule.id}, 'value', this.value)">
+        <button class="btn-remove" onclick="removeRule('${type}', ${rule.id})">✕</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateRuleField(type, id, field, value) {
+  const rules = type === 'buy' ? buyRules : sellRules;
+  const rule = rules.find(r => r.id === id);
+  if (rule) rule[field] = value;
+}
+
+function updateRuleParam(type, id, param, value) {
+  const rules = type === 'buy' ? buyRules : sellRules;
+  const rule = rules.find(r => r.id === id);
+  if (rule) {
+    if (!rule.params) rule.params = {};
+    rule.params[param] = value;
+  }
+}
+
+function updateRuleIndicator(type, id, indId) {
+  const rules = type === 'buy' ? buyRules : sellRules;
+  const rule = rules.find(r => r.id === id);
+  const ind = INDICATORS.find(i => i.id === indId);
+  if (rule && ind) {
+    rule.indicator = indId;
+    rule.params = { ...ind.defaults };
+  }
+  renderRules();
+}
+
+// ─── BACKTEST ────────────────────────────────────────────────────────
+async function runBacktest() {
+  if (buyRules.length === 0) {
+    showToast('Please add at least one Buy Rule first!', 'error');
+    return;
+  }
+
+  switchTab('backtest');
+  const resultsDiv = document.getElementById('backtest-results');
+  resultsDiv.innerHTML = '<div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;">Running backtest on real Yahoo Finance data...</span></div>';
+
+  const symbol = document.getElementById('algo-stock').value;
+  const interval = document.getElementById('algo-timeframe').value;
+  const range = document.getElementById('algo-range').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/backtest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbol,
+        interval,
+        range,
+        buyRules: buyRules.map(r => ({ indicator: r.indicator, params: r.params, condition: r.condition, value: r.value })),
+        sellRules: sellRules.map(r => ({ indicator: r.indicator, params: r.params, condition: r.condition, value: r.value })),
+        config: {
+          initialCapital: parseInt(document.getElementById('initial-capital').value) || 100000,
+          positionSize: (parseInt(document.getElementById('position-size').value) || 10) / 100,
+          stopLossPercent: parseFloat(document.getElementById('stop-loss').value) || 2,
+          targetPercent: parseFloat(document.getElementById('target-pct').value) || 4,
+        }
+      }),
+    });
+
+    if (!res.ok) throw new Error('Backtest API error');
+    const data = await res.json();
+    renderBacktestResults(data, symbol);
+    showToast('Backtest completed successfully!');
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="empty"><div class="empty-icon">❌</div><div class="empty-text">Backtest failed. Make sure server is running.<br><code style="color:var(--green)">npm start</code></div><button class="btn-outline btn-sm" onclick="switchTab('builder')">← Back to Builder</button></div>`;
+    showToast('Backtest failed: ' + err.message, 'error');
+  }
+}
+
+function renderBacktestResults(data, symbol) {
+  const { stats, trades, equityCurve } = data;
+  const resultsDiv = document.getElementById('backtest-results');
+
+  // Stats
+  const statCards = [
+    { label: 'Total Trades', value: stats.totalTrades, color: 'var(--text)' },
+    { label: 'Win Rate', value: stats.winRate + '%', color: stats.winRate > 50 ? 'var(--green)' : 'var(--red)' },
+    { label: 'Net P&L', value: `₹${stats.totalPnL.toLocaleString('en-IN')}`, color: stats.totalPnL >= 0 ? 'var(--green)' : 'var(--red)' },
+    { label: 'Net Return', value: stats.netReturn + '%', color: stats.netReturn >= 0 ? 'var(--green)' : 'var(--red)' },
+    { label: 'Max Drawdown', value: stats.maxDrawdown + '%', color: 'var(--red)' },
+    { label: 'Sharpe Ratio', value: stats.sharpeRatio, color: 'var(--blue)' },
+    { label: 'Profit Factor', value: stats.profitFactor, color: 'var(--yellow)' },
+    { label: 'Final Capital', value: `₹${stats.finalCapital.toLocaleString('en-IN')}`, color: stats.finalCapital >= stats.initialCapital ? 'var(--green)' : 'var(--red)' },
+  ].map(s => `<div class="stat-box"><div class="stat-val" style="color:${s.color}">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join('');
+
+  // Equity curve SVG
+  const eqSvg = drawEquityCurve(equityCurve);
+
+  // Trade log
+  const tradeRows = trades.slice(-30).map(t => `
+    <tr>
+      <td style="color:var(--muted)">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
+      <td><span class="badge ${t.type === 'BUY' ? 'badge-buy' : 'badge-sell'}">${t.type}</span></td>
+      <td>₹${parseFloat(t.entryPrice).toFixed(2)}</td>
+      <td>₹${parseFloat(t.exitPrice).toFixed(2)}</td>
+      <td style="color:${t.pnl >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${t.pnl >= 0 ? '+' : ''}₹${t.pnl.toLocaleString('en-IN')}</td>
+      <td style="color:var(--muted)">${t.exitReason}</td>
+    </tr>
+  `).join('');
+
+  resultsDiv.innerHTML = `
+    <div class="card">
+      <div class="card-title">📊 Backtest Results — ${symbol} (${document.getElementById('algo-name').value})</div>
+      <div class="stats-grid">${statCards}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 Equity Curve</div>
+      <div class="chart-container">${eqSvg}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Trade Log (Last 30)</div>
+      <div style="overflow-x:auto;">
+        <table class="trade-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Entry</th><th>Exit</th><th>P&L</th><th>Reason</th></tr></thead>
+          <tbody>${tradeRows || '<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:20px;">No trades executed</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-outline btn-sm" onclick="switchTab('builder')">← Edit Algo</button>
+      <button class="btn-primary btn-sm" onclick="scanSignals()">🔔 Scan Live Signals</button>
+    </div>
+  `;
+}
+
+function drawEquityCurve(data) {
+  if (!data || data.length < 2) return '<div class="empty-text">No equity data</div>';
+  const W = 700, H = 220, PAD = 50;
+  const vals = data.map(d => d.equity);
+  const min = Math.min(...vals) * 0.98;
+  const max = Math.max(...vals) * 1.02;
+  const range = max - min || 1;
+
+  const points = data.map((d, i) => ({
+    x: PAD + (i / (data.length - 1)) * (W - PAD * 2),
+    y: PAD + (1 - (d.equity - min) / range) * (H - PAD * 2),
+  }));
+
+  const line = points.map(p => `${p.x},${p.y}`).join(' ');
+  const area = `${points[0].x},${H - PAD} ${line} ${points[points.length - 1].x},${H - PAD}`;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<defs><linearGradient id="eqG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ff88" stop-opacity="0.25"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></linearGradient></defs>`;
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD + (i / 4) * (H - PAD * 2);
+    const val = max - (i / 4) * range;
+    svg += `<line x1="${PAD}" x2="${W - PAD}" y1="${y}" y2="${y}" stroke="#1a2332" stroke-width="0.5"/>`;
+    svg += `<text x="${PAD - 5}" y="${y + 4}" fill="#6b8f9e" font-size="9" text-anchor="end" font-family="JetBrains Mono">₹${(val / 1000).toFixed(0)}k</text>`;
+  }
+
+  svg += `<polygon points="${area}" fill="url(#eqG)"/>`;
+  svg += `<polyline points="${line}" fill="none" stroke="#00ff88" stroke-width="2"/>`;
+
+  // Start & end labels
+  svg += `<text x="${PAD}" y="${H - 8}" fill="#4a5568" font-size="8" font-family="JetBrains Mono">Start</text>`;
+  svg += `<text x="${W - PAD}" y="${H - 8}" fill="#4a5568" font-size="8" text-anchor="end" font-family="JetBrains Mono">End</text>`;
+
+  svg += '</svg>';
+  return svg;
+}
+
+// ─── LIVE SIGNALS ────────────────────────────────────────────────────
+async function scanSignals() {
+  if (buyRules.length === 0) {
+    showToast('Please add at least one Buy Rule first!', 'error');
+    return;
+  }
+
+  switchTab('signals');
+  const resultsDiv = document.getElementById('signals-results');
+  resultsDiv.innerHTML = '<div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;">Scanning NIFTY 50 stocks... This may take a minute.</span></div>';
+
+  try {
+    const res = await fetch(`${API_BASE}/scan`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rules: buyRules.map(r => ({ indicator: r.indicator, params: r.params, condition: r.condition, value: r.value })),
+      }),
+    });
+
+    if (!res.ok) throw new Error('Scan API error');
+    const data = await res.json();
+    renderSignals(data);
+    showToast(`Scan complete! ${data.signals.length} signals found from ${data.scannedCount} stocks.`);
+  } catch (err) {
+    resultsDiv.innerHTML = `<div class="empty"><div class="empty-icon">❌</div><div class="empty-text">Scan failed. Make sure server is running.<br><code style="color:var(--green)">npm start</code></div></div>`;
+    showToast('Scan failed: ' + err.message, 'error');
+  }
+}
+
+function renderSignals(data) {
+  const resultsDiv = document.getElementById('signals-results');
+  const { signals, scannedCount, timestamp } = data;
+
+  const header = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div class="card-title" style="margin:0;">🔔 Live Signals — ${document.getElementById('algo-name').value}</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <span class="live-dot"></span>
+        <span style="font-size:11px;color:var(--green)">LIVE (15-min delay)</span>
+        <span style="font-size:10px;color:var(--dim)">${scannedCount} stocks scanned</span>
+        <button class="btn-outline btn-xs" onclick="scanSignals()">↻ Refresh</button>
+      </div>
+    </div>
+  `;
+
+  if (signals.length === 0) {
+    resultsDiv.innerHTML = `<div class="card">${header}<div class="empty" style="padding:30px;"><div class="empty-icon">🔍</div><div class="empty-text">No signals found matching your rules right now.<br>Try adjusting your indicator conditions or values.</div></div></div>`;
+    return;
+  }
+
+  const signalCards = signals.map(sig => `
+    <div class="signal-card" style="border-left:3px solid ${sig.signal === 'BUY' ? 'var(--green)' : 'var(--red)'};">
+      <div class="signal-header">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span class="signal-sym">${sig.symbol}</span>
+          <span class="badge ${sig.signal === 'BUY' ? 'badge-buy' : 'badge-sell'}">${sig.signal}</span>
+          ${sig.name ? `<span style="font-size:11px;color:var(--dim)">${sig.name}</span>` : ''}
+        </div>
+        <span style="font-size:11px;color:var(--muted)">${sig.time || ''}</span>
+      </div>
+      <div class="signal-details">
+        <div><span>Price: </span><strong>₹${sig.price}</strong></div>
+        <div><span>Target: </span><strong style="color:var(--green)">₹${sig.target}</strong></div>
+        <div><span>SL: </span><strong style="color:var(--red)">₹${sig.stopLoss}</strong></div>
+        <div><span>Change: </span><strong style="color:${sig.change >= 0 ? 'var(--green)' : 'var(--red)'}">${sig.change >= 0 ? '+' : ''}${sig.change}%</strong></div>
+        <div><span>Via: </span><strong>${sig.indicator}</strong></div>
+      </div>
+    </div>
+  `).join('');
+
+  resultsDiv.innerHTML = `<div class="card">${header}${signalCards}</div>
+    <div class="actions">
+      <button class="btn-outline btn-sm" onclick="switchTab('builder')">← Edit Algo</button>
+    </div>`;
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Observer for fade animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.style.animationPlayState = 'running'; });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+</script>
+</body>
+</html>
