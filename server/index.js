@@ -18,17 +18,18 @@ const TWELVE_BASE = 'https://api.twelvedata.com';
 
 // ─── Stock Prices (realistic base prices for demo) ─────────────────
 
+// Updated prices as of March 2026
 const STOCK_PRICES = {
-  'RELIANCE': 2450, 'TCS': 3800, 'HDFCBANK': 1650, 'INFY': 1550, 'ICICIBANK': 1100,
-  'HINDUNILVR': 2350, 'ITC': 430, 'SBIN': 780, 'BHARTIARTL': 1620, 'KOTAKBANK': 1780,
-  'LT': 3400, 'AXISBANK': 1050, 'ASIANPAINT': 2250, 'MARUTI': 11500, 'TITAN': 3200,
-  'SUNPHARMA': 1750, 'BAJFINANCE': 6800, 'WIPRO': 480, 'ULTRACEMCO': 10200, 'NESTLEIND': 2300,
-  'TATAMOTORS': 720, 'POWERGRID': 290, 'NTPC': 340, 'HCLTECH': 1650, 'TECHM': 1550,
-  'ONGC': 240, 'TATASTEEL': 135, 'JSWSTEEL': 870, 'ADANIENT': 2400, 'BAJAJFINSV': 1580,
-  'DRREDDY': 1200, 'CIPLA': 1450, 'EICHERMOT': 4600, 'DIVISLAB': 3800, 'APOLLOHOSP': 6200,
-  'BRITANNIA': 5100, 'COALINDIA': 380, 'GRASIM': 2500, 'HEROMOTOCO': 4200, 'HINDALCO': 580,
-  'INDUSINDBK': 960, 'M&M': 2700, 'SBILIFE': 1400, 'TATACONSUM': 950, 'LTIM': 5200,
-  'BAJAJ-AUTO': 8500, 'BPCL': 290, 'HDFCLIFE': 620, 'SHRIRAMFIN': 2600, 'NIFTY50': 22500,
+  'RELIANCE': 1394, 'TCS': 3750, 'HDFCBANK': 1680, 'INFY': 1820, 'ICICIBANK': 1250,
+  'HINDUNILVR': 2280, 'ITC': 410, 'SBIN': 740, 'BHARTIARTL': 1680, 'KOTAKBANK': 1950,
+  'LT': 3350, 'AXISBANK': 1020, 'ASIANPAINT': 2200, 'MARUTI': 11800, 'TITAN': 3100,
+  'SUNPHARMA': 1680, 'BAJFINANCE': 8200, 'WIPRO': 290, 'ULTRACEMCO': 10800, 'NESTLEIND': 2200,
+  'TATAMOTORS': 680, 'POWERGRID': 285, 'NTPC': 320, 'HCLTECH': 1700, 'TECHM': 1520,
+  'ONGC': 245, 'TATASTEEL': 138, 'JSWSTEEL': 920, 'ADANIENT': 2300, 'BAJAJFINSV': 1850,
+  'DRREDDY': 1180, 'CIPLA': 1420, 'EICHERMOT': 4900, 'DIVISLAB': 5800, 'APOLLOHOSP': 6400,
+  'BRITANNIA': 4900, 'COALINDIA': 370, 'GRASIM': 2500, 'HEROMOTOCO': 3800, 'HINDALCO': 610,
+  'INDUSINDBK': 970, 'M&M': 2750, 'SBILIFE': 1380, 'TATACONSUM': 1000, 'LTIM': 5400,
+  'BAJAJ-AUTO': 8400, 'BPCL': 285, 'HDFCLIFE': 600, 'SHRIRAMFIN': 2700, 'NIFTY50': 22100,
 };
 
 // ─── Twelve Data API Fetcher ────────────────────────────────────────
@@ -48,7 +49,9 @@ async function fetchFromTwelveData(endpoint, params) {
 }
 
 async function fetchStockData(symbol, interval = '1day', range = '1y') {
-  const nseSymbol = symbol.includes(':') ? symbol : `${symbol}:NSE`;
+  // Twelve Data uses plain symbol for NSE stocks - no prefix needed
+  // But we need to specify exchange=NSE
+  const cleanSymbol = symbol.replace(':NSE', '').replace('.NS', '');
   
   // Map range to outputsize
   const sizeMap = { '1mo': 30, '3mo': 90, '6mo': 180, '1y': 365, '2y': 730, '5y': 500 };
@@ -60,7 +63,8 @@ async function fetchStockData(symbol, interval = '1day', range = '1y') {
   
   try {
     const data = await fetchFromTwelveData('/time_series', {
-      symbol: nseSymbol,
+      symbol: cleanSymbol,
+      exchange: 'NSE',
       interval: apiInterval,
       outputsize: Math.min(outputsize, 500),
       format: 'JSON',
@@ -444,8 +448,8 @@ app.post('/api/scan', async (req, res) => {
 app.get('/api/quote/:symbol', async (req, res) => {
   try {
     const sym = req.params.symbol;
-    const nseSymbol = sym.includes(':') ? sym : `${sym}:NSE`;
-    const data = await fetchFromTwelveData('/quote', { symbol: nseSymbol });
+    const cleanSym = sym.replace(':NSE', '').replace('.NS', '');
+    const data = await fetchFromTwelveData('/quote', { symbol: cleanSym, exchange: 'NSE' });
     res.json({
       symbol: sym, price: parseFloat(data.close), change: parseFloat(data.change),
       changePercent: parseFloat(data.percent_change), high: parseFloat(data.high),
