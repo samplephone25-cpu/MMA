@@ -361,8 +361,8 @@
       <span data-en="Build Your Algo." data-hi="अपना Algo बनाओ।">Build Your Algo.</span><br>
       <span data-en="No Code Needed." data-hi="बिना Coding के।">No Code Needed.</span>
     </h1>
-    <p class="fade-up fade-up-d2" data-en="Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Yahoo Finance data." data-hi="NSE और BSE के लिए powerful trading algorithms बनाओ बिना एक भी line code लिखे। Real historical data पर backtest करो और live signals पाओ — सब Yahoo Finance के 15-minute delayed data के साथ।">
-      Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Yahoo Finance data.
+    <p class="fade-up fade-up-d2" data-en="Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Twelve Data data." data-hi="NSE और BSE के लिए powerful trading algorithms बनाओ बिना एक भी line code लिखे। Real historical data पर backtest करो और live signals पाओ — सब Twelve Data के 15-minute delayed data के साथ।">
+      Create powerful trading algorithms for NSE & BSE without writing a single line of code. Backtest on real historical data & get live signals — all with 15-minute delayed Twelve Data data.
     </p>
     <div class="cta-group fade-up fade-up-d3">
       <button class="btn-primary" onclick="goTo('dashboard')">
@@ -396,7 +396,7 @@
     <div class="feature-card fade-up fade-up-d1">
       <span class="feature-icon">📊</span>
       <div class="feature-title" data-en="Backtest on Real Data" data-hi="Real Data पर Backtest">Backtest on Real Data</div>
-      <div class="feature-desc" data-en="Test strategies on real NSE/BSE historical data from Yahoo Finance. See equity curves, Sharpe ratio, drawdowns, and full trade logs." data-hi="Yahoo Finance से real NSE/BSE historical data पर strategies test करें। Equity curves, Sharpe ratio, drawdowns, और full trade logs देखें।">Test strategies on real NSE/BSE historical data from Yahoo Finance. See equity curves, Sharpe ratio, drawdowns, and full trade logs.</div>
+      <div class="feature-desc" data-en="Test strategies on real NSE/BSE historical data from Twelve Data. See equity curves, Sharpe ratio, drawdowns, and full trade logs." data-hi="Twelve Data से real NSE/BSE historical data पर strategies test करें। Equity curves, Sharpe ratio, drawdowns, और full trade logs देखें।">Test strategies on real NSE/BSE historical data from Twelve Data. See equity curves, Sharpe ratio, drawdowns, and full trade logs.</div>
     </div>
     <div class="feature-card fade-up fade-up-d2">
       <span class="feature-icon">🔔</span>
@@ -406,7 +406,7 @@
     <div class="feature-card fade-up fade-up-d3">
       <span class="feature-icon">🇮🇳</span>
       <div class="feature-title" data-en="Made for India" data-hi="India के लिए बना">Made for India</div>
-      <div class="feature-desc" data-en="Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Yahoo Finance." data-hi="NSE और BSE के लिए बनाया गया। सभी NIFTY 50 stocks support, Hindi + English interface। Yahoo Finance से 15-min delayed data।">Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Yahoo Finance.</div>
+      <div class="feature-desc" data-en="Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Twelve Data." data-hi="NSE और BSE के लिए बनाया गया। सभी NIFTY 50 stocks support, Hindi + English interface। Twelve Data से 15-min delayed data।">Built for NSE & BSE. Supports all NIFTY 50 stocks, with Hindi + English interface. 15-min delayed data via Twelve Data.</div>
     </div>
   </section>
 
@@ -449,7 +449,7 @@
   <div class="dashboard">
     <!-- Status -->
     <div class="status-bar loading" id="api-status">
-      ⏳ <span data-en="Connecting to Yahoo Finance..." data-hi="Yahoo Finance से connect हो रहा है...">Connecting to Yahoo Finance...</span>
+      ⏳ <span data-en="Connecting to Twelve Data..." data-hi="Twelve Data से connect हो रहा है...">Connecting to Twelve Data...</span>
     </div>
 
     <!-- ─── BUILDER TAB ──── -->
@@ -539,7 +539,7 @@
       <!-- Chart Preview -->
       <div class="card" id="chart-preview-card">
         <div class="card-title">📈 <span id="chart-stock-label">RELIANCE</span> — <span data-en="Live Chart" data-hi="Live Chart">Live Chart</span>
-          <span style="font-weight:400;color:var(--dim);"> (Yahoo Finance, 15-min delay)</span>
+          <span style="font-weight:400;color:var(--dim);"> (Twelve Data, Real NSE Data)</span>
         </div>
         <div class="chart-container" id="chart-container">
           <div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;" data-en="Loading chart..." data-hi="Chart load हो रहा है...">Loading chart...</span></div>
@@ -697,7 +697,7 @@ async function checkApiHealth() {
     const res = await fetch(`${API_BASE}/health`);
     if (res.ok) {
       status.className = 'status-bar ok';
-      status.innerHTML = `✅ <span>Connected to Yahoo Finance — Real NSE/BSE data (15-min delay)</span>`;
+      status.innerHTML = `✅ <span>Connected to Twelve Data — Real NSE/BSE data (15-min delay)</span>`;
     } else throw new Error();
   } catch {
     status.className = 'status-bar error';
@@ -905,7 +905,7 @@ async function runBacktest() {
 
   switchTab('backtest');
   const resultsDiv = document.getElementById('backtest-results');
-  resultsDiv.innerHTML = '<div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;">Running backtest on real Yahoo Finance data...</span></div>';
+  resultsDiv.innerHTML = '<div class="loader"><div class="spinner"></div><span style="color:var(--muted);font-size:12px;">Running backtest on real Twelve Data data...</span></div>';
 
   const symbol = document.getElementById('algo-stock').value;
   const interval = document.getElementById('algo-timeframe').value;
